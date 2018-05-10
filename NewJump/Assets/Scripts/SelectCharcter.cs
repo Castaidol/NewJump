@@ -5,19 +5,36 @@ using UnityEngine;
 public class SelectCharcter : MonoBehaviour {
 
     public bool isSelected;
+    [HideInInspector]
+    public bool reset;
+    public int characterIndex;
 
     Animator anim;
+
+    CharSelectManager manager;
 	
 	void Start ()
     {
         anim = GetComponent<Animator>();
+        manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<CharSelectManager>();
         isSelected = false;
 	}
 	
 	
-	void Update ()
+	void FixedUpdate ()
     {
-		
+        if(characterIndex == PlayerPrefs.GetInt("Character"))
+        {
+            anim.SetBool("isSelected", isSelected); 
+        }
+
+        if (isSelected && reset)
+        {
+            isSelected = false;
+            reset = false;
+            anim.SetBool("isSelected", isSelected);
+            return;
+        }
 	}
 
 	private void OnMouseDown()
@@ -25,16 +42,9 @@ public class SelectCharcter : MonoBehaviour {
         if(!isSelected)
         {
             isSelected = true;
-            anim.SetBool("isSelected", isSelected);
+            manager.ResetIcon();
+            PlayerPrefs.SetInt("Character", characterIndex);
             return;
         }
-
-        if(isSelected)
-        {
-            isSelected = false;
-            anim.SetBool("isSelected", isSelected);
-            return;
-        }
-       
 	}
 }
